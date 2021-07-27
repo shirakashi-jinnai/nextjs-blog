@@ -4,6 +4,7 @@ import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../components/utils.module.css";
 import { getSortedPostsData } from "../lib/posts";
 import Date from "../components/date";
+import { type } from "node:os";
 
 //serverside-rendering --> getServerSideProps(context){...}
 export async function getStaticProps() {
@@ -15,7 +16,15 @@ export async function getStaticProps() {
   };
 }
 
-export default function Home({ allPostsData }) {
+type Props = {
+  allPostsData: {
+    id: string;
+    title: string;
+    date: string;
+  }[];
+};
+
+export default function Home({ allPostsData }:Props) {
   return (
     <Layout home>
       <Head>
@@ -23,7 +32,6 @@ export default function Home({ allPostsData }) {
       </Head>
       <section className={utilStyles.headingMd}>
         <p>My name is Jinnai Shirakashi, I like cupnudle!</p>
-        <p></p>
       </section>
       <section className={`${utilStyles.headingMd}${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>

@@ -3,6 +3,8 @@ import path from "path";
 import matter from "gray-matter";
 import remark from "remark"; //マークダウンコンテンツをレンダリングするためのライブラリ
 import html from "remark-html";
+import fetch from "node-fetch";
+const base64 = require("js-base64").Base64;
 
 //path.joinはpathの文字列を結合する
 //process.cwd()はカレントディレクトリを示す
@@ -37,7 +39,7 @@ export function getSortedPostsData() {
 
   //Sort posts by data
   return allPostsData.sort(({ date: a }, { date: b }) => {
-    //降順の日付にソートしている
+    //日付を降順にソートしている
     if (a < b) {
       return 1;
     } else if (a > b) {
@@ -48,8 +50,14 @@ export function getSortedPostsData() {
   });
 }
 
-export function getAllPostIds() {
-  const fileNames = fs.readdirSync(postsDirectory);
+export async function getAllPostIds() {
+  // const fileNames = fs.readdirSync(postsDirectory);
+
+  const repoUrl =
+    "https://api.github.com/repos/shirakashi-jinnai/nextjs-blog/contents/posts";
+  const response = await fetch(repoUrl);
+  const files = await response.json();
+  const fileNames = files.map((file) => file.name);
 
   // Returns an array that looks like this:
   // [
@@ -67,7 +75,7 @@ export function getAllPostIds() {
   return fileNames.map((fileName) => {
     return {
       params: {
-        id: fileName.replace(/\.md$/, '')
+        id: fileName.replace(/\.md$/, ""),
         // id: ["rezero", "rem"],
       },
     };
@@ -75,8 +83,13 @@ export function getAllPostIds() {
 }
 
 export async function getPostData(id) {
-  const fullPath = path.join(postsDirectory, `${id}.md`);
-  const fileContents = fs.readFileSync(fullPath, "utf-8");
+  // const fullPath = path.join(postsDirectory, `${id}.md`);
+  // const fileContents = fs.readFileSync(fullPath, "utf-8");
+
+  const repoUrl = `https://api.github.com/repos/shirakashi-jinnai/nextjs-blog/contents/posts/${id}.md`;
+  const response = await fetch(repoUrl);
+  const file = await response.json();
+  const fileContents = base64.decode(file.content)
 
   //Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
