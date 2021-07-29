@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "js-base": "0.0.1-beta",
     "next": "11.0.1",
+    "node-fetch": "^2.6.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
